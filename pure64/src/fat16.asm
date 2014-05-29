@@ -58,7 +58,7 @@ readcluster:
 	pop rax					; Get our original cluster value back
 	shl rbx, 8				; Quick multiply by 256 (RBX was the sector offset in the FAT)
 	sub rax, rbx				; RAX is now pointed to the offset within the sector
-	shl rax, 1				; Quickly multiply by 2 (since entries are 16-bit)
+	shl rax, 2				; Quickly multiply by 2 (since entries are 16-bit)
 	add rsi, rax
 	lodsw					; AX now holds the next cluster
 	pop rdi
