@@ -1,19 +1,93 @@
 /* 64-bit C example kernel for Pure64 */
 /* Written by Ian Seyler (www.returninfinity.com) */
 
+#include "printf.h"
+#include <stdint.h>
 
+static int cx = 0;
+static int cy = 0;
+static int ca = 7;
 unsigned int print(char *message, unsigned int line);
+void clrscr(void);
+void xputc(void* p, char c);
+void scrollup();
+
+typedef struct e820_t {
+  uint64_t start;
+  uint64_t len;
+  uint32_t type;
+} e820_t;
 
 int main()
 {
-	print("Welcome to your 64-bit OS written in C (Thanks to Pure64!).", 12);
-	while(1)
-	{
-		// infinite loop of doing nothing
-	}
-	return (0);
+  e820_t *pmem = (void *)0x4000;
+  char spinner[]="-\\|/-\\|/";
+  int i;
+  clrscr();
+  init_printf(0,xputc);
+  printf("Hello from printf!\nThis is a test\n");
+  while(pmem->start || pmem->len || pmem->type) {
+    printf("%020x : %010x : %d\n", (int) pmem->start, (int) pmem->type, (int)pmem->len);
+    pmem++;
+  }
+
+  
+  while(1) {
+    // asm("hlt"); // infinite loop of doing nothing
+    cx = 0;
+    cy = 0;
+    printf("%08x\n", i++);
+  }
+  return (0);
 };
 
+void clrscr(void) {
+  char *vidmem = (char *) 0xb8000;
+  int i;
+  for(i=0;i<80*22; i++) {
+    vidmem[2*i] = 0;
+    vidmem[1+ (2*i)] = ca; // (i / 80) * 16;
+  }
+}
+
+void scrollup() {
+  char *vidmem = (char *) 0xb8000;
+  int i;
+  for(i=0;i<80*24; i++) {
+    vidmem[2*i] = vidmem[2*(i+80)];
+    vidmem[1+ (2*i)] = vidmem[1+ 2*(i+80)];
+  }
+}
+
+void crlf() {
+  cx = 0;
+  cy++;
+  if (cy > 24) {
+    cy = 24;
+    scrollup();
+  }
+}
+
+void pxputc( void* p, char c) {
+  char *vidmem = (char *) 0xb8000;
+  vidmem[2*(cx + 80*cy)] = c;
+  vidmem[1+ 2*(cx + 80*cy)] = ca;
+  cx++;
+  if (cx > 80) {
+    crlf();
+  }
+}
+
+void xputc( void* p, char c) {
+  switch(c) {
+    case 0x0d:
+    case 0x0a:
+      crlf();
+      break;
+    default:
+      pxputc(p, c);
+  }
+}
 
 
 /* Kernel functions */
