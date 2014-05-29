@@ -118,7 +118,12 @@ hdd_setup_no_mbr:
 	mov [fat16_Fats], al		; This will probably be 2
 	mov ax, [rdi+0x11]
 	mov [fat16_RootDirEnts], ax
+	xor eax, eax
 	mov ax, [rdi+0x16]
+	cmp ax, 0x0000
+	jne notDDforSectorsPerFat
+	mov eax, [rdi+0x24]
+notDDforSectorsPerFat:
 	mov [fat16_SectorsPerFat], ax
 
 ; Find out how many sectors are on the disk

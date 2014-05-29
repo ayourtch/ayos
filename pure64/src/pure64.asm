@@ -747,7 +747,7 @@ readfile_getdata:
 	call os_print_char
 	pop rax
 	call readcluster	; store in memory
-	cmp ax, 0xFFFF		; Value for end of cluster chain.
+	cmp ax, 0x0		
 	jne readfile_getdata	; Are there more clusters? If so then read again.. if not fall through.
 
 ; Print a message that the kernel has been loaded

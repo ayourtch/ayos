@@ -39,6 +39,8 @@ fat16_RootStart:	equ SystemVariables + 144
 fat16_PartitionOffset:	equ SystemVariables + 148
 sata_base:		equ SystemVariables + 152
 os_BSP:			equ SystemVariables + 156
+fat32_xrootClst:	equ SystemVariables + 160
+fat16_SectorsPerFat:	equ SystemVariables + 164
 
 ; DW - Starting at offset 256, increments by 2
 cpu_speed:		equ SystemVariables + 256
@@ -47,7 +49,7 @@ cpu_detected:		equ SystemVariables + 260
 mem_amount:		equ SystemVariables + 262
 fat16_BytesPerSector:	equ SystemVariables + 264
 fat16_ReservedSectors:	equ SystemVariables + 266
-fat16_SectorsPerFat:	equ SystemVariables + 268
+XXXfat16_SectorsPerFat:	equ SystemVariables + 268
 fat16_RootDirEnts:	equ SystemVariables + 270
 ata_base:		equ SystemVariables + 272
 
