@@ -16,24 +16,33 @@ typedef struct e820_t {
   uint64_t start;
   uint64_t len;
   uint32_t type;
+  uint32_t pad1, pad2, pad3;
 } e820_t;
 
 int main()
 {
-  e820_t *pmem = (void *)0x4000;
+  unsigned char *pc = (void *)0x4000;
+  e820_t *pe = (void *)0x4000;
   char spinner[]="-\\|/-\\|/";
-  int i;
+  int i = 0;
   clrscr();
   init_printf(0,xputc);
   printf("Hello from printf!\nThis is a test\n");
-  while(pmem->start || pmem->len || pmem->type) {
-    printf("%020x : %010x : %d\n", (int) pmem->start, (int) pmem->type, (int)pmem->len);
-    pmem++;
+  for(i=0; i < 128; i++) { 
+    printf("%02X ", *pc++);
+    if (i % 16 == 15) {
+      printf("\n");
+    }
   }
 
+  while(pe->start || pe->len || pe->type) {
+    printf("%08x : %08x : %08x\n", (int)pe->start, (int)pe->type, (int)pe->len);
+    pe++;
+  }
+  
   
   while(1) {
-    // asm("hlt"); // infinite loop of doing nothing
+    asm("hlt"); // infinite loop of doing nothing
     cx = 0;
     cy = 0;
     printf("%08x\n", i++);
