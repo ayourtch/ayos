@@ -46,22 +46,97 @@ void kbd() {
   printf("%x\n", c);
 }
 
+void keyboard_intr(void) __attribute__((aligned(16)));
+void keyboard_intr(void) {
+  uint32_t c;
+  asm("push %rdi");
+  asm("push %rax");
+  asm("push %rdx");
+  asm("xor %rax, %rax");
+  // Get the scan code
+  asm("mov $0x60, %dx");
+  asm("in     (%dx),%al");
+  // extract it into a variable      
+  asm("mov %%eax, %0\n" : "=m"(c));
+  // put it into screen memory for debugging
+  asm("mov %al, 0x000B8088");
+
+  // inform the APIC
+  asm("mov 0x5060, %rdi"); // [os_LocalAPICAddress]
+  asm("add $0xB0, %rdi");
+  asm("xor %rax, %rax");
+  asm("stos   %rax,%es:(%rdi)");
+
+  asm("pop %rdx");
+  asm("pop %rax");
+  asm("pop %rdi");
+  // We are restoring this as this was pushed by the prologue
+  asm("pop %rbp");
+  asm("iretq");
+  // Never reached
+}
+
+void timer_intr(void) __attribute__((aligned(16)));
+void timer_intr(void) {
+  uint32_t c;
+  asm("push %rdi");
+  asm("push %rax");
+  asm("push %rdx");
+  asm("xor %rax, %rax");
+
+  asm("mov $0x70, %dx");
+  asm("mov $0x0c, %al");
+  asm("out     %al,(%dx)");
+  asm("mov $0x71, %dx");
+  asm("in     (%dx),%al");
+
+  // extract it into a variable      
+  asm("mov %%eax, %0\n" : "=m"(c));
+  // put it into screen memory for debugging
+  asm("mov %al, 0x000B8090");
+
+  // inform the APIC
+  asm("mov 0x5060, %rdi"); // [os_LocalAPICAddress]
+  asm("add $0xB0, %rdi");
+  asm("xor %rax, %rax");
+  asm("stos   %rax,%es:(%rdi)");
+
+  asm("pop %rdx");
+  asm("pop %rax");
+  asm("pop %rdi");
+  // We are restoring this as this was pushed by the prologue
+  asm("pop %rbp");
+  asm("iretq");
+  // Never reached
+}
+
+
+void setirq(int num, void *handler) {
+  long long ptr = (long long) handler;
+  uint16_t *p0_15 = (void *) (num*16);
+  uint16_t *p16_31 = (void *) (num*16 + 6);
+  uint32_t *p32_63 = (void *) (num*16 + 8);
+  asm("cli");
+  (*p0_15) = ptr & 0xffff;
+  (*p16_31) = (ptr >> 16) & 0xffff;
+  (*p32_63) = (ptr >> 32) & 0xffffffff;
+  asm("sti");
+}
+
 int realmain()
 {
   e820_t *pe = (void *)0x4000;
-  void **pi = (void*) 0x5a38;
   int i=0;
 
   clrscr();
   init_printf(0,xputc);
-  printf("\nHello!\n");
-  asm("cli");
-  (*pi) = kbd;
-  asm("sti");
+  printf("\nHello\n");
 
   dump((void *)0x200, 0x9*16); 
+  setirq(0x21, keyboard_intr);
+  setirq(0x28, timer_intr);
   
-  while(0) {
+  while(1) {
     asm("hlt"); // infinite loop of doing nothing
   }
   while(1) {
@@ -81,6 +156,7 @@ int realmain()
       printf("%08x %08x\n", *prtc, i++);
       cx = scx; 
       cy = scy;
+
       asm("sti");
     }
   }
