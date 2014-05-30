@@ -34,20 +34,18 @@ align 16
 keyboard:
 	push rdi
 	push rax
+	push rbx
 
 	xor rax, rax
 
 	in al, 0x60			; Get the scancode from the keyboard
-	test al, 0x80
-	jz keydown
+	mov rbx, [os_KeyboardHandler]
+	or rbx, rbx
+	jz no_kbd_handler
+	call rbx
 	jmp keyboard_done
-
-keydown:
+no_kbd_handler:
 	mov [0x000B8088], al		; Dump the scancode to the screen
-
-	mov rax, [os_Counter_RTC]
-	add rax, 10
-	mov [os_Counter_RTC], rax
 
 keyboard_done:
 	mov rdi, [os_LocalAPICAddress]	; Acknowledge the IRQ on APIC
@@ -55,6 +53,7 @@ keyboard_done:
 	xor eax, eax
 	stosd
 
+	pop rbx
 	pop rax
 	pop rdi
 	iretq

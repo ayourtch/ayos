@@ -29,6 +29,7 @@ os_Counter_Timer:	equ SystemVariables + 0x18
 os_Counter_RTC:		equ SystemVariables + 0x20
 os_LocalAPICAddress:	equ SystemVariables + 0x28
 os_IOAPICAddress:	equ SystemVariables + 0x30
+os_KeyboardHandler:	equ SystemVariables + 0x38
 
 ; DD - Starting at offset 128, increments by 4
 hd1_size:		equ SystemVariables + 128
