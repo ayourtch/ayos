@@ -19,33 +19,70 @@ typedef struct e820_t {
   uint32_t pad1, pad2, pad3;
 } e820_t;
 
-int main()
-{
-  unsigned char *pc = (void *)0x4000;
-  e820_t *pe = (void *)0x4000;
-  char spinner[]="-\\|/-\\|/";
+int realmain();
+
+int main() {
+  realmain();
+}
+
+void dump(void *p, int n) {
+  unsigned char *pc = p;
   int i = 0;
-  clrscr();
-  init_printf(0,xputc);
-  printf("Hello from printf!\nThis is a test\n");
-  for(i=0; i < 128; i++) { 
+  printf("%04x : ", 0);
+  for(i=0; i < n; i++) { 
     printf("%02X ", *pc++);
     if (i % 16 == 15) {
       printf("\n");
+      if(i+1 < n) {
+        printf("%04x : ", i+1);
+      }
     }
   }
+}
 
-  while(pe->start || pe->len || pe->type) {
-    printf("%08x : %08x : %08x\n", (int)pe->start, (int)pe->type, (int)pe->len);
-    pe++;
-  }
+void kbd() {
+  uint32_t c;
+  asm("mov %%eax, %0\n" : "=m"(c));
+  printf("%x\n", c);
+}
+
+int realmain()
+{
+  e820_t *pe = (void *)0x4000;
+  void **pi = (void*) 0x5a38;
+  int i=0;
+
+  clrscr();
+  init_printf(0,xputc);
+  printf("\nHello!\n");
+  asm("cli");
+  (*pi) = kbd;
+  asm("sti");
+
+  dump((void *)0x200, 0x9*16); 
   
-  
-  while(1) {
+  while(0) {
     asm("hlt"); // infinite loop of doing nothing
-    cx = 0;
-    cy = 0;
-    printf("%08x\n", i++);
+  }
+  while(1) {
+    if (0) {
+      asm("hlt"); // infinite loop of doing nothing
+      cx = 0;
+      cy = 0;
+      printf("%08x\n", i++);
+    }
+    if (1) {
+      int scx = cx;
+      int scy = cy;
+      uint32_t *prtc = (void*)0x5a20;
+      asm("cli");
+      cx = 0;
+      cy = 0;
+      printf("%08x %08x\n", *prtc, i++);
+      cx = scx; 
+      cy = scy;
+      asm("sti");
+    }
   }
   return (0);
 };
@@ -65,6 +102,10 @@ void scrollup() {
   for(i=0;i<80*24; i++) {
     vidmem[2*i] = vidmem[2*(i+80)];
     vidmem[1+ (2*i)] = vidmem[1+ 2*(i+80)];
+  }
+  for(i=0;i<80;i++) {
+    vidmem[2*i + 24*80*2] = 0;
+    vidmem[2*i + 1 + 24*80*2] = ca;
   }
 }
 
