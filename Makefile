@@ -13,4 +13,6 @@ all:
 clean:
 	(cd kernel; make clean)
 	rm -f build/* || true
+disasm:
+	objdump -D -b binary -m i386:x86-64 kernel/kernel64.sys  | less
 
