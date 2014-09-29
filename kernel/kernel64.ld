@@ -14,6 +14,9 @@ SECTIONS
 	{
 		*(.bss)
 	}
-	_end = .;
 	PROVIDE(_end = .);
+	.misc : 
+	{
+        	LONG( _end - main )
+	}
 }

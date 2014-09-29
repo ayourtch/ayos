@@ -20,8 +20,22 @@ typedef struct e820_t {
 } e820_t;
 
 int realmain();
+extern void *_end;
 
 int main() {
+  char *vidmem = (char *) 0xb8000;
+  void **pend = &_end;
+  uint32_t calc_len = (*pend);
+  uint32_t real_len = (char *)&_end - (char *)main;
+  if(real_len != calc_len) {
+    vidmem[0] = '#';
+    vidmem[1] = 0x4e;
+    asm("hlt");
+  } else {
+    vidmem[0] = '!';
+    vidmem[1] = 0x2f;
+    // asm("hlt");
+  }
   realmain();
 }
 
@@ -126,11 +140,14 @@ void setirq(int num, void *handler) {
 int realmain()
 {
   e820_t *pe = (void *)0x4000;
+  void *endptr = &_end;
+  void **endp = endptr;
   int i=0;
 
   clrscr();
   init_printf(0,xputc);
-  printf("\nHello\n");
+  printf("\nHello, total len: %d\n", (char *)endptr - (char *)main);
+  printf("Endptr: %x\n", *endp);
 
   dump((void *)0x200, 0x9*16); 
   setirq(0x21, keyboard_intr);
