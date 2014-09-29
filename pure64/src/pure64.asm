@@ -746,9 +746,17 @@ readfile_getdata:
 	mov al, '.'		; Show loading progress
 	call os_print_char
 	pop rax
+
+	push rax
 	call readcluster	; store in memory
-	cmp ax, 0x0		
-	jne readfile_getdata	; Are there more clusters? If so then read again.. if not fall through.
+
+	pop  rax
+	inc  rax
+	; FIXME: somehow readcluster returns 0 when it should not.
+	cmp ax, 512
+	jle readfile_getdata
+	; cmp ax, 0x0		
+	;jne readfile_getdata	; Are there more clusters? If so then read again.. if not fall through.
 
 ; Print a message that the kernel has been loaded
 	mov rsi, msg_done
