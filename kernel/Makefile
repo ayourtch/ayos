@@ -1,4 +1,4 @@
-CFLAGS=-nostdlib -nostartfiles -nodefaultlibs -Ilua-5.1.4/src/ -Ilib/stdlib -Ilib/math
+CFLAGS= -m64 -mstackrealign -nostdlib -nostartfiles -nodefaultlibs -Ilua-5.1.4/src/ -Ilib/stdlib -Ilib/math
 XLUAOBJS= 
 LUAOBJS = \
 	lua-5.1.4/src/lapi.o \
@@ -22,6 +22,7 @@ LUAOBJS = \
 	lua-5.1.4/src/lzio.o \
 	lua-5.1.4/src/ldebug.o \
 	lua-5.1.4/src/lauxlib.o \
+	lua-5.1.4/src/lbaselib.o \
 
 LIBS = \
 	lib/setjmp/setjmp.o \
@@ -67,7 +68,6 @@ XXX= \
 	lua-5.1.4/src/loadlib.o \
 	lua-5.1.4/src/lstrlib.o \
 	lua-5.1.4/src/loslib.o \
-	lua-5.1.4/src/lbaselib.o \
 	lua-5.1.4/src/liolib.o \
 	lua-5.1.4/src/linit.o \
 	lua-5.1.4/src/lua.o \

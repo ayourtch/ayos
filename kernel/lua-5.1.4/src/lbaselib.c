@@ -20,7 +20,7 @@
 #include "lualib.h"
 
 
-
+#ifdef HAS_PRINT
 
 /*
 ** If your system does not support `stdout', you can just remove this function.
@@ -48,6 +48,8 @@ static int luaB_print (lua_State *L) {
   fputs("\n", stdout);
   return 0;
 }
+
+#endif
 
 
 static int luaB_tonumber (lua_State *L) {
@@ -457,7 +459,7 @@ static const luaL_Reg base_funcs[] = {
   {"loadstring", luaB_loadstring},
   {"next", luaB_next},
   {"pcall", luaB_pcall},
-  {"print", luaB_print},
+  // {"print", luaB_print},
   {"rawequal", luaB_rawequal},
   {"rawget", luaB_rawget},
   {"rawset", luaB_rawset},
