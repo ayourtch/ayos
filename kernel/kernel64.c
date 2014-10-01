@@ -3,6 +3,8 @@
 
 #include "printf.h"
 #include <stdint.h>
+#include "lua.h"
+
 
 static int cx = 0;
 static int cy = 0;
@@ -137,34 +139,52 @@ void setirq(int num, void *handler) {
   asm("sti");
 }
 
+static int lua_fn_say(lua_State *L) {
+  int n = lua_gettop(L);
+  size_t len;
+  char *str = (void *)lua_tolstring(L, 1, &len);
+  printf("LUA says: '%s'\n", str);
+
+  return 0;
+}
+
+
+lua_State *L;
+void lua_init_state(lua_State *L) {
+  lua_register(L, "say", lua_fn_say);
+}
+
 int realmain()
 {
   e820_t *pe = (void *)0x4000;
   void *endptr = &_end;
   void **endp = endptr;
   char *dyn = 0;
-  char *dyn2 = 0;
   int i=0;
 
   clrscr();
   init_printf(0,xputc);
   printf("\nHello, total len: %d\n", (char *)endptr - (char *)main);
   printf("Endptr: %x\n", *endp);
-  dyn = malloc(5000000);
-  dyn2 = malloc(1000);
+  dyn = malloc(5000);
   strcpy(dyn, "testing123");
-  strcpy(dyn2, "second");
   printf("Dynamic: %x, '%s'\n", dyn, dyn);
-  printf("Dynamic2: %x, '%s'\n", dyn2, dyn2);
-  for(i=0;i<500000; i+=10) {
-    cx = 0;
-    printf("I: %d", i);
-    memset(dyn, 0, i);
-  }
   free(dyn);
-  dyn = malloc(1000);
-  strcpy(dyn, "new-testing123");
-  printf("Dynamic: %x, '%s'\n", dyn, dyn);
+  L = lua_open();
+  lua_init_state(L);
+  if(luaL_loadstring(L, "say('Hello!');")) {
+    printf("Lua load error: %s\n", lua_tostring(L,-1));
+  } else {
+    lua_pcall(L, 0, LUA_MULTRET, 0);
+    /*
+    lua_getglobal(L, "request");
+    lua_pushinteger(L, idx);
+    int err = lua_pcall(L, 1, 0, 0);
+    if (err != 0) {
+     debug(0,0,"%d: LUA error %s\n",getpid(), lua_tostring(L,-1));
+    }
+    */
+  }
 
   dump((void *)0x200, 0x9*16); 
   setirq(0x21, keyboard_intr);

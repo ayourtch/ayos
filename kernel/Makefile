@@ -1,4 +1,4 @@
-CFLAGS=-nostdlib -nostartfiles -nodefaultlibs
+CFLAGS=-nostdlib -nostartfiles -nodefaultlibs -Ilua-5.1.4/src/
 XLUAOBJS= 
 LUAOBJS = \
 	lua-5.1.4/src/lapi.o \
