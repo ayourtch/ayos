@@ -47,6 +47,7 @@ LIBS = \
 	lib/ctype/iscntrl.o \
 	lib/locale/strcoll.o \
 	lib/locale/localeconv.o \
+	lib/malloc.o \
 	lib.o
 
 

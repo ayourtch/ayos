@@ -22,8 +22,17 @@ unsigned long strtoul(const char *str, char **endptr, int base) {
 int sprintf(char * str, const char * format, ...) {
 }
 
-void free(void *ptr) {
+void abort(void) {
+  asm("hlt");
 }
 
-void * realloc(void *ptr, size_t size) {
+/* The heap memory starts from 2MB onwards */
+
+static char *curr_brk = 2*1024*1024;
+
+void *sbrk(int increment) {
+  char *b = curr_brk;
+  curr_brk += increment;
+  return b;
 }
+
