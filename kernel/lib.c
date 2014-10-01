@@ -9,18 +9,6 @@ double floor(double x) {
 
 double pow(double x, double y) {
 }
-#ifdef NOTHERE
-
-char *strchr(const char *s, int c) {
-}
-
-
-void longjmp(jmp_buf env, int val) {
-}
-
-int _setjmp(jmp_buf env) {
-}
-#endif
 
 void exit(int status) {
 }
@@ -42,38 +30,6 @@ char * strncpy(char * dst, const char * src, size_t n){
 
 char * strcat(char * s1, const char * s2) { 
 }
-
-#ifdef NOTHERE
-int strcmp(const char *s1, const char *s2) {
-}
-
-size_t strcspn(const char *s1, const char *s2) {
-}
-
-char * strncat(char * s1, const char * s2, size_t n) { 
-}
-
-void * memcpy(void * dst, const void * src, size_t n) {
-}
-
-int memcmp(const void *s1, const void *s2, size_t n) {
-}
-
-char * strstr(const char *s1, const char *s2) {
-}
-
-int isalnum(int c) {
-}
-int isspace(int c) {
-}
-int isalpha(int c) {
-}
-int iscntrl(int c) {
-}
-
-int strcoll(const char *s1, const char *s2) {
-}
-#endif
 
 void free(void *ptr) {
 }
