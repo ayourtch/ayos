@@ -39,6 +39,7 @@ LIBS = \
 	lib/ctype/isspace.o \
 	lib/ctype/isalpha.o \
 	lib/ctype/iscntrl.o \
+	lib/locale/strcoll.o \
 	lib.o
 
 

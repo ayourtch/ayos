@@ -71,9 +71,9 @@ int isalpha(int c) {
 int iscntrl(int c) {
 }
 
-#endif
 int strcoll(const char *s1, const char *s2) {
 }
+#endif
 
 void free(void *ptr) {
 }
