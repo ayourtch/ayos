@@ -28,6 +28,10 @@ LIBS = \
 	lib/setjmp/longjmp.o \
 	lib/string/strchr.o \
 	lib/string/strchrnul.o \
+	lib/string/memcpy.o \
+	lib/string/memcmp.o \
+	lib/string/strstr.o \
+	lib/string/memchr.o \
 	lib.o
 
 
