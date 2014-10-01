@@ -66,6 +66,23 @@ void kbd() {
   printf("%x\n", c);
 }
 
+#define KBD_QUEUE_SIZE 32
+int kbd_head = 0;
+int kbd_tail = 0;
+char kbd_buf[KBD_QUEUE_SIZE];
+
+int kbd_ready() {
+  return (kbd_head != kbd_tail);
+}
+
+int getc() {
+  int c = -1;
+  while(!kbd_ready()) { asm("hlt"); }
+  c = kbd_buf[kbd_tail++];
+  kbd_tail = kbd_tail % KBD_QUEUE_SIZE;
+  return c;
+}
+
 void keyboard_intr(void) __attribute__((aligned(16)));
 void keyboard_intr(void) {
   uint32_t c;
@@ -78,6 +95,10 @@ void keyboard_intr(void) {
   asm("in     (%dx),%al");
   // extract it into a variable      
   asm("mov %%eax, %0\n" : "=m"(c));
+  if((kbd_head+1) % KBD_QUEUE_SIZE != kbd_tail) {
+    kbd_buf[kbd_head++] = c;
+    kbd_head = kbd_head % KBD_QUEUE_SIZE;
+  }
   // put it into screen memory for debugging
   asm("mov %al, 0x000B8088");
 
@@ -199,7 +220,7 @@ int realmain()
   // asm("movaps %xmm0, 0x9f898-0x80");
   printf("1X\n");
 */
-  if(luaL_loadstring(L, "k={'A', 'B', 'C'}; for i=1,30 do cr(); say('Hello' .. k[(i%3)+1] .. '!'); end")) {
+  if(luaL_loadstring(L, "k={'A', 'B', 'C'}; for i=1,10 do cr(); say('Hello' .. k[(i%3)+1] .. '!'); end")) {
     printf("Lua load error: %s\n", lua_tostring(L,-1));
   } else {
     int err = lua_pcall(L, 0, LUA_MULTRET, 0);
@@ -216,12 +237,15 @@ int realmain()
     */
   }
 
-  dump((void *)0x200, 0x9*16); 
+  //dump((void *)0x200, 0x9*16); 
   setirq(0x21, keyboard_intr);
   setirq(0x28, timer_intr);
   
   while(1) {
-    asm("hlt"); // infinite loop of doing nothing
+    int c = getc();
+    printf("Key: %x     ", (uint8_t)c);
+    cx = 0;
+    
   }
   while(1) {
     if (0) {
