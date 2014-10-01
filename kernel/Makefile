@@ -35,6 +35,12 @@ LIBS = \
 	lib/string/strcmp.o \
 	lib/string/strcspn.o \
 	lib/string/strncat.o \
+	lib/string/strcat.o \
+	lib/string/strcpy.o \
+	lib/string/stpcpy.o \
+	lib/string/strncpy.o \
+	lib/string/stpncpy.o \
+	lib/string/memset.o \
 	lib/ctype/isalnum.o \
 	lib/ctype/isspace.o \
 	lib/ctype/isalpha.o \

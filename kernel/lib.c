@@ -22,12 +22,6 @@ unsigned long strtoul(const char *str, char **endptr, int base) {
 int sprintf(char * str, const char * format, ...) {
 }
 
-char * strncpy(char * dst, const char * src, size_t n){
-}
-
-char * strcat(char * s1, const char * s2) { 
-}
-
 void free(void *ptr) {
 }
 
