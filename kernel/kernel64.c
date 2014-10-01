@@ -38,7 +38,11 @@ int main() {
     vidmem[1] = 0x2f;
     // asm("hlt");
   }
+  asm("push    %rsp");
+  asm("sub    $16,%rsp");
+  asm("and    $-0x10,%rsp");
   realmain();
+  asm("pop %rsp");
 }
 
 void dump(void *p, int n) {
@@ -172,7 +176,21 @@ int realmain()
   free(dyn);
   L = lua_open();
   lua_init_state(L);
-  if(luaL_loadstring(L, "for i=1,3 do say('Hello!'); end")) {
+  // lua_pushinteger(L, 1234);
+  lua_pushstring(L, "a1234");
+  lua_pushstring(L, "b1234");
+  lua_pushstring(L, "c1234");
+  lua_pushstring(L, "d1234");
+  lua_pushstring(L, "e1234");
+  lua_pushstring(L, "f1234");
+  lua_pushstring(L, "g1234");
+  printf("0X\n");
+  printf("Lua test: %s\n", lua_tostring(L,-1));
+  // asm("movaps %xmm0, 0x538a8-0x80");
+  asm("movaps %xmm0, 0x9f890-0x80");
+  // asm("movaps %xmm0, 0x9f898-0x80");
+  printf("1X\n");
+  if(luaL_loadstring(L, "for i=1,3 do say('Hello' .. 1 .. '!'); end")) {
     printf("Lua load error: %s\n", lua_tostring(L,-1));
   } else {
     lua_pcall(L, 0, LUA_MULTRET, 0);
