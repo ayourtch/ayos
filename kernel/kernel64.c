@@ -143,6 +143,12 @@ void setirq(int num, void *handler) {
   asm("sti");
 }
 
+static int lua_fn_cr(lua_State *L) {
+  int n = lua_gettop(L);
+  size_t len;
+  cx = 0;
+  return 0;
+}
 static int lua_fn_say(lua_State *L) {
   int n = lua_gettop(L);
   size_t len;
@@ -156,6 +162,7 @@ static int lua_fn_say(lua_State *L) {
 lua_State *L;
 void lua_init_state(lua_State *L) {
   lua_register(L, "say", lua_fn_say);
+  lua_register(L, "cr", lua_fn_cr);
 }
 
 int realmain()
@@ -177,6 +184,7 @@ int realmain()
   L = lua_open();
   lua_init_state(L);
   // lua_pushinteger(L, 1234);
+/*
   lua_pushstring(L, "a1234");
   lua_pushstring(L, "b1234");
   lua_pushstring(L, "c1234");
@@ -190,10 +198,14 @@ int realmain()
   asm("movaps %xmm0, 0x9f890-0x80");
   // asm("movaps %xmm0, 0x9f898-0x80");
   printf("1X\n");
-  if(luaL_loadstring(L, "for i=1,3 do say('Hello' .. 1 .. '!'); end")) {
+*/
+  if(luaL_loadstring(L, "k={'A', 'B', 'C'}; for i=1,30 do cr(); say('Hello' .. k[(i%3)+1] .. '!'); end")) {
     printf("Lua load error: %s\n", lua_tostring(L,-1));
   } else {
-    lua_pcall(L, 0, LUA_MULTRET, 0);
+    int err = lua_pcall(L, 0, LUA_MULTRET, 0);
+    if(err) {
+      printf("Lua run error: %s\n", lua_tostring(L,-1));
+    }
     /*
     lua_getglobal(L, "request");
     lua_pushinteger(L, idx);

@@ -57,6 +57,7 @@ LIBS = \
 	lib/math/scalbn.o \
 	lib/math/scalbnl.o \
 	lib/math/fmodl.o \
+	lib/math/floor.o \
 	lib/errno/errno_location.o \
 	lib/malloc.o \
 	lib.o

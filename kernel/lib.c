@@ -4,10 +4,12 @@
 
 typedef int size_t;
 
+/*
 double floor(double x) {
   tfp_printf("floor called, unimplemented!\n");
   return 0;
 }
+*/
 
 double pow(double x, double y) {
   tfp_printf("pow called, unimplemented!\n");
