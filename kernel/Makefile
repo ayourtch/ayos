@@ -1,7 +1,6 @@
 CFLAGS=-nostdlib -nostartfiles -nodefaultlibs
 XLUAOBJS= 
 LUAOBJS = \
-	lib.o \
 	lua-5.1.4/src/lapi.o \
 	lua-5.1.4/src/lcode.o \
 	lua-5.1.4/src/ldo.o \
@@ -24,6 +23,14 @@ LUAOBJS = \
 	lua-5.1.4/src/ldebug.o \
 	lua-5.1.4/src/lauxlib.o \
 
+LIBS = \
+	lib/setjmp/setjmp.o \
+	lib/setjmp/longjmp.o \
+	lib/string/strchr.o \
+	lib/string/strchrnul.o \
+	lib.o
+
+
 
 XXX= \
 	lua-5.1.4/src/luac.o \
@@ -42,9 +49,10 @@ XXX= \
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-kernel64.sys: kernel64.o printf.o kernel64.ld $(LUAOBJS)
-	ld -T kernel64.ld -o kernel64.sys --print-map kernel64.o printf.o $(LUAOBJS) >symbols.map
+kernel64.sys: kernel64.o printf.o kernel64.ld $(LUAOBJS) $(LIBS)
+	ld -T kernel64.ld -o kernel64.sys --print-map kernel64.o printf.o $(LUAOBJS) $(LIBS) >symbols.map
 
 clean:
 	rm -f *.o
+	rm -f $(LIBS)
 	rm -f kernel64.sys

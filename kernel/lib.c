@@ -9,15 +9,18 @@ double floor(double x) {
 
 double pow(double x, double y) {
 }
+#ifdef NOTHERE
 
 char *strchr(const char *s, int c) {
 }
+
 
 void longjmp(jmp_buf env, int val) {
 }
 
 int _setjmp(jmp_buf env) {
 }
+#endif
 
 void exit(int status) {
 }
