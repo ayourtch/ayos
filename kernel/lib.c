@@ -61,7 +61,6 @@ int memcmp(const void *s1, const void *s2, size_t n) {
 
 char * strstr(const char *s1, const char *s2) {
 }
-#endif
 
 int isalnum(int c) {
 }
@@ -72,6 +71,7 @@ int isalpha(int c) {
 int iscntrl(int c) {
 }
 
+#endif
 int strcoll(const char *s1, const char *s2) {
 }
 
