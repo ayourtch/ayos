@@ -43,6 +43,7 @@ char * strncpy(char * dst, const char * src, size_t n){
 char * strcat(char * s1, const char * s2) { 
 }
 
+#ifdef NOTHERE
 int strcmp(const char *s1, const char *s2) {
 }
 
@@ -52,7 +53,6 @@ size_t strcspn(const char *s1, const char *s2) {
 char * strncat(char * s1, const char * s2, size_t n) { 
 }
 
-#ifdef NOTHERE
 void * memcpy(void * dst, const void * src, size_t n) {
 }
 

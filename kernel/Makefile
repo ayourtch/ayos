@@ -32,6 +32,9 @@ LIBS = \
 	lib/string/memcmp.o \
 	lib/string/strstr.o \
 	lib/string/memchr.o \
+	lib/string/strcmp.o \
+	lib/string/strcspn.o \
+	lib/string/strncat.o \
 	lib.o
 
 
