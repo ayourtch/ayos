@@ -13,9 +13,6 @@ double pow(double x, double y) {
 void exit(int status) {
 }
 
-void * localeconv(void) {
-}
-
 double strtod(const char *nptr, char **endptr) {
 }
 
