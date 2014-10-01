@@ -1,6 +1,4 @@
-typedef struct jmp_buf {
-  char x;
-} jmp_buf;
+#include <setjmp.h>
 
 typedef int size_t;
 
