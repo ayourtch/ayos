@@ -172,7 +172,7 @@ int realmain()
   free(dyn);
   L = lua_open();
   lua_init_state(L);
-  if(luaL_loadstring(L, "say('Hello!');")) {
+  if(luaL_loadstring(L, "for i=1,3 do say('Hello!'); end")) {
     printf("Lua load error: %s\n", lua_tostring(L,-1));
   } else {
     lua_pcall(L, 0, LUA_MULTRET, 0);

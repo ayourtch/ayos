@@ -1,4 +1,4 @@
-CFLAGS=-nostdlib -nostartfiles -nodefaultlibs -Ilua-5.1.4/src/
+CFLAGS=-nostdlib -nostartfiles -nodefaultlibs -Ilua-5.1.4/src/ -Ilib/stdlib -Ilib/math
 XLUAOBJS= 
 LUAOBJS = \
 	lua-5.1.4/src/lapi.o \
@@ -45,8 +45,18 @@ LIBS = \
 	lib/ctype/isspace.o \
 	lib/ctype/isalpha.o \
 	lib/ctype/iscntrl.o \
+	lib/ctype/__ctype_b_loc.o \
 	lib/locale/strcoll.o \
 	lib/locale/localeconv.o \
+	lib/stdlib/strtod.o \
+	lib/stdlib/floatscan.o \
+	lib/stdlib/shgetc.o \
+	lib/stdlib/__uflow.o \
+	lib/stdlib/__toread.o \
+	lib/math/scalbn.o \
+	lib/math/scalbnl.o \
+	lib/math/fmodl.o \
+	lib/errno/errno_location.o \
 	lib/malloc.o \
 	lib.o
 
