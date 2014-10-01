@@ -90,6 +90,7 @@ rtc_poll:
 	mov al, 0x0A			; Status Register A
 	out 0x70, al			; Select the address
 	mov al, 00100110b		; UIP (0), RTC@32.768KHz (010), Rate@1024Hz (0110)
+	mov al, 00101001b		; UIP (0), RTC@32.768KHz (010), Rate@128Hz (1001)
 	out 0x71, al			; Write the data
 
 ; VBE init
