@@ -261,9 +261,12 @@ int realmain()
   
   while(1) {
     int c = getc();
-    printf("Key: %x     ", (uint8_t)c);
-    cx = 0;
-    
+    lua_getglobal(L, "keypress");
+    lua_pushinteger(L, (uint8_t)c);
+    int err = lua_pcall(L, 1, 0, 0);
+    if (err != 0) {
+      printf("keypress LUA error %s\n", lua_tostring(L,-1));
+    }
   }
   while(1) {
     if (0) {
@@ -301,6 +304,7 @@ void clrscr(void) {
 void scrollup() {
   char *vidmem = (char *) 0xb8000;
   int i;
+  asm("cli");
   for(i=0;i<80*24; i++) {
     vidmem[2*i] = vidmem[2*(i+80)];
     vidmem[1+ (2*i)] = vidmem[1+ 2*(i+80)];
@@ -309,6 +313,7 @@ void scrollup() {
     vidmem[2*i + 24*80*2] = 0;
     vidmem[2*i + 1 + 24*80*2] = ca;
   }
+  asm("sti");
 }
 
 void crlf() {
