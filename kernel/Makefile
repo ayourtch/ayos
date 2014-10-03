@@ -89,6 +89,6 @@ kernel64.sys: kernel64.o printf.o luacode.o kernel64.ld $(LUAOBJS) $(LIBS)
 	ld -T kernel64.ld -o kernel64.sys --print-map kernel64.o printf.o luacode.o $(LUAOBJS) $(LIBS) >symbols.map
 
 clean:
-	rm -f *.o
+	rm -f *.o luacode.c
 	rm -f $(LIBS)
 	rm -f kernel64.sys
