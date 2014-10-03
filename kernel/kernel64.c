@@ -179,11 +179,32 @@ static int lua_fn_say(lua_State *L) {
   return 0;
 }
 
+static int lua_fn_poke(lua_State *L) {
+  int n = lua_gettop(L);
+  int iaddr = lua_tointeger(L, 1);
+  int ival = lua_tointeger(L, 2);
+  char *ptr = (char *)iaddr;
+  int ret = (uint8_t)*ptr;
+  *ptr = ival;
+  lua_pushinteger(L, ret);
+  return 1;
+}
+
+static int lua_fn_peek(lua_State *L) {
+  int iaddr = lua_tointeger(L, 1);
+  char *ptr = (char *)iaddr;
+  int ret = (uint8_t)*ptr;
+  lua_pushinteger(L, ret);
+  return 1;
+}
+
 
 lua_State *L;
 void lua_init_state(lua_State *L) {
   lua_register(L, "say", lua_fn_say);
   lua_register(L, "cr", lua_fn_cr);
+  lua_register(L, "poke", lua_fn_poke);
+  lua_register(L, "peek", lua_fn_peek);
 }
 
 extern unsigned char luacode_lua[];
