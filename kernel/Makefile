@@ -55,6 +55,15 @@ LIBS = \
 	lib/stdlib/shgetc.o \
 	lib/stdlib/__uflow.o \
 	lib/stdlib/__toread.o \
+	lib/stdlib/sprintf.o \
+	lib/stdlib/vsprintf.o \
+	lib/stdlib/vsnprintf.o \
+	lib/stdlib/vfprintf.o \
+	lib/stdlib/fwrite.o \
+	lib/stdlib/__towrite.o \
+	lib/math/__fpclassifyl.o \
+	lib/math/__signbitl.o \
+	lib/math/frexpl.o \
 	lib/math/scalbn.o \
 	lib/math/scalbnl.o \
 	lib/math/fmodl.o \

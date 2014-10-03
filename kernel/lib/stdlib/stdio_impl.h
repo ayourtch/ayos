@@ -1,7 +1,8 @@
 #ifndef _STDIO_IMPL_H
 #define _STDIO_IMPL_H
-typedef int size_t;
-typedef int off_t;
+#include <stddef.h>
+//typedef int size_t;
+typedef size_t off_t;
 #define EOF (-1)
 
 

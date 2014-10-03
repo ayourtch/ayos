@@ -15,9 +15,54 @@
 
 #include <stdint.h>
 #include <float.h>
-// #include <math.h>
+#include <math.h>
 #include <complex.h>
 #include <endian.h>
+
+static __inline unsigned __FLOAT_BITS(float __f)
+{
+        union {float __f; unsigned __i;} __u;
+        __u.__f = __f;
+        return __u.__i;
+}
+static __inline unsigned long long __DOUBLE_BITS(double __f)
+{
+        union {double __f; unsigned long long __i;} __u;
+        __u.__f = __f;
+        return __u.__i;
+}
+
+#undef fpclassify
+#define fpclassify(x) ( \
+        sizeof(x) == sizeof(float) ? __fpclassifyf(x) : \
+        sizeof(x) == sizeof(double) ? __fpclassify(x) : \
+        __fpclassifyl(x) )
+
+#undef isinf
+#define isinf(x) ( \
+        sizeof(x) == sizeof(float) ? (__FLOAT_BITS(x) & 0x7fffffff) == 0x7f800000 : \
+        sizeof(x) == sizeof(double) ? (__DOUBLE_BITS(x) & -1ULL>>1) == 0x7ffULL<<52 : \
+        __fpclassifyl(x) == FP_INFINITE)
+
+#undef isnan
+#define isnan(x) ( \
+        sizeof(x) == sizeof(float) ? (__FLOAT_BITS(x) & 0x7fffffff) > 0x7f800000 : \
+        sizeof(x) == sizeof(double) ? (__DOUBLE_BITS(x) & -1ULL>>1) > 0x7ffULL<<52 : \
+        __fpclassifyl(x) == FP_NAN)
+
+#undef isnormal
+#define isnormal(x) ( \
+        sizeof(x) == sizeof(float) ? ((__FLOAT_BITS(x)+0x00800000) & 0x7fffffff) >= 0x01000000 : \
+        sizeof(x) == sizeof(double) ? ((__DOUBLE_BITS(x)+(1ULL<<52)) & -1ULL>>1) >= 1ULL<<53 : \
+        __fpclassifyl(x) == FP_NORMAL)
+
+#undef isfinite
+#define isfinite(x) ( \
+        sizeof(x) == sizeof(float) ? (__FLOAT_BITS(x) & 0x7fffffff) < 0x7f800000 : \
+        sizeof(x) == sizeof(double) ? (__DOUBLE_BITS(x) & -1ULL>>1) < 0x7ffULL<<52 : \
+        __fpclassifyl(x) > FP_INFINITE)
+
+
 
 #if LDBL_MANT_DIG == 53 && LDBL_MAX_EXP == 1024
 #elif LDBL_MANT_DIG == 64 && LDBL_MAX_EXP == 16384 && __BYTE_ORDER == __LITTLE_ENDIAN
@@ -133,9 +178,11 @@ do {                                              \
 int    __rem_pio2_large(double*,double*,int,int,int);
 
 int    __rem_pio2(double,double*);
+/*
 double __sin(double,double,int);
 double __cos(double,double);
 double __tan(double,double,int);
+*/
 double __expo2(double);
 double complex __ldexp_cexp(double complex,int);
 
@@ -147,9 +194,11 @@ float  __expo2f(float);
 float complex __ldexp_cexpf(float complex,int);
 
 int __rem_pio2l(long double, long double *);
+/*
 long double __sinl(long double, long double, int);
 long double __cosl(long double, long double);
 long double __tanl(long double, long double, int);
+*/
 
 /* polynomial evaluation */
 long double __polevll(long double, const long double *, int);

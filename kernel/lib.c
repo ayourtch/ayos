@@ -35,7 +35,7 @@ unsigned long strtoul(const char *str, char **endptr, int base) {
 static void putcp(void* p,char c) {
   *(*((char**)p))++ = c;
 } 
-
+/*
 void sprintf(char* s,char *fmt, ...) {
         va_list va;
         va_start(va,fmt);
@@ -43,6 +43,7 @@ void sprintf(char* s,char *fmt, ...) {
         putcp(&s,0);
         va_end(va);
 }
+*/
 
 void abort(void) {
   asm("hlt");
