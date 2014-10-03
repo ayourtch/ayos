@@ -186,6 +186,9 @@ void lua_init_state(lua_State *L) {
   lua_register(L, "cr", lua_fn_cr);
 }
 
+extern unsigned char luacode_lua[];
+extern unsigned int luacode_lua_len;
+
 int realmain()
 {
   e820_t *pe = (void *)0x4000;
@@ -220,6 +223,20 @@ int realmain()
   // asm("movaps %xmm0, 0x9f898-0x80");
   printf("1X\n");
 */
+  if(luacode_lua[luacode_lua_len-1] != 0xa) {
+    printf("luacode.lua should end with an empty line\n");
+  } else {
+    luacode_lua[luacode_lua_len-1] = 0;
+    if(luaL_loadstring(L, luacode_lua)) {
+      printf("Lua load error: %s\n", lua_tostring(L,-1));
+    } else {
+      int err = lua_pcall(L, 0, LUA_MULTRET, 0);
+      if(err) {
+        printf("Lua run error: %s\n", lua_tostring(L,-1));
+      }
+    }
+  }
+#ifdef NOTNOW
   if(luaL_loadstring(L, "k={'A', 'B', 'C'}; for i=1,10 do cr(); say('Hello' .. k[(i%3)+1] .. '!'); end")) {
     printf("Lua load error: %s\n", lua_tostring(L,-1));
   } else {
@@ -236,6 +253,7 @@ int realmain()
     }
     */
   }
+#endif
 
   //dump((void *)0x200, 0x9*16); 
   setirq(0x21, keyboard_intr);

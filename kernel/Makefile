@@ -1,3 +1,4 @@
+.PHONY: all
 CFLAGS= -m64 -mstackrealign -nostdlib -nostartfiles -nodefaultlibs -Ilua-5.1.4/src/ -Ilib/stdlib -Ilib/math
 XLUAOBJS= 
 LUAOBJS = \
@@ -76,12 +77,16 @@ XXX= \
 	lua-5.1.4/src/ldblib.o \
 	lua-5.1.4/src/print.o 
 
+all: kernel64.sys
 
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-kernel64.sys: kernel64.o printf.o kernel64.ld $(LUAOBJS) $(LIBS)
-	ld -T kernel64.ld -o kernel64.sys --print-map kernel64.o printf.o $(LUAOBJS) $(LIBS) >symbols.map
+luacode.c: luacode.lua
+	xxd -i luacode.lua >luacode.c
+
+kernel64.sys: kernel64.o printf.o luacode.o kernel64.ld $(LUAOBJS) $(LIBS)
+	ld -T kernel64.ld -o kernel64.sys --print-map kernel64.o printf.o luacode.o $(LUAOBJS) $(LIBS) >symbols.map
 
 clean:
 	rm -f *.o
