@@ -336,7 +336,7 @@ void scrollup() {
   char *vidmem = (char *) 0xb8000;
   int i;
   asm("cli");
-  for(i=0;i<80*24; i++) {
+  for(i=80*15;i<80*24; i++) {
     vidmem[2*i] = vidmem[2*(i+80)];
     vidmem[1+ (2*i)] = vidmem[1+ 2*(i+80)];
   }
