@@ -1,8 +1,11 @@
 local bnot = bit.bnot
-local band, bor, bxor = bit.band, bit.bor, bit.bxor
+local band, bor, bxor, tohex = bit.band, bit.bor, bit.bxor, bit.tohex
 local lshift, rshift, rol = bit.lshift, bit.rshift, bit.rol
 
 local outw = hw.outw
+local outl = hw.outl
+local inb = hw.inb
+local inl = hw.inl
 local poke = hw.poke
 
 local lcx = 0
@@ -97,6 +100,36 @@ function hwcursor(cx, cy)
   setvideoreg(0xf, band(0xff, offs)) -- loc lo
 end
 
+function pciwrite_any(addr, val)
+  outl(0xCF8, addr)
+  outl(0xCFC, val)
+end
+
+function pciread_any(addr)
+  outl(0xCF8, addr)
+  return inl(0xCFC)
+end
+
+
+function pciaddr(bus, device, func, offs)
+  return bor(0x80000000, lshift(bus, 16), lshift(device, 11), lshift(func, 8), offs)
+end
+
+function pciread(bus, device, func, offs)
+  return pciread_any(pciaddr(bus, device, func, offs))
+end
+
+
+function pciscan()
+  for bus=0,0 do
+    for dev=0,8 do
+      say(tohex(pciread(bus, dev, 0, 0)))
+    end
+  end
+end
+
+
+
 
 function showcursor()
   -- write_bg(lcx, lcy, cursor_x)
@@ -185,6 +218,7 @@ function keypress(code)
          movecursor(0, 1)
        elseif key == "KB_ESC" then
          clrscr()
+         pciscan()
        end
        writeat(0, 24, tostring(key) .. "             ")
      end
@@ -200,6 +234,11 @@ function keypress(code)
  end
 end
 
+
+
 clrscr()
 setvideoreg(0xe, 0) -- loc hi
 setvideoreg(0xf, 0) -- loc lo
+pciscan()
+
+
