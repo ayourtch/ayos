@@ -41,11 +41,11 @@ static int luaB_print (lua_State *L) {
     if (s == NULL)
       return luaL_error(L, LUA_QL("tostring") " must return a string to "
                            LUA_QL("print"));
-    if (i>1) fputs("\t", stdout);
-    fputs(s, stdout);
+    if (i>1) tfp_printf("\t");
+    tfp_printf("%s", s);
     lua_pop(L, 1);  /* pop result */
   }
-  fputs("\n", stdout);
+  tfp_printf("\n");
   return 0;
 }
 
@@ -281,11 +281,12 @@ static int luaB_loadstring (lua_State *L) {
   return load_aux(L, luaL_loadbuffer(L, s, l, chunkname));
 }
 
-
+/*
 static int luaB_loadfile (lua_State *L) {
   const char *fname = luaL_optstring(L, 1, NULL);
   return load_aux(L, luaL_loadfile(L, fname));
 }
+*/
 
 
 /*
@@ -321,7 +322,7 @@ static int luaB_load (lua_State *L) {
   return load_aux(L, status);
 }
 
-
+/*
 static int luaB_dofile (lua_State *L) {
   const char *fname = luaL_optstring(L, 1, NULL);
   int n = lua_gettop(L);
@@ -329,6 +330,7 @@ static int luaB_dofile (lua_State *L) {
   lua_call(L, 0, LUA_MULTRET);
   return lua_gettop(L) - n;
 }
+*/
 
 
 static int luaB_assert (lua_State *L) {
@@ -447,12 +449,12 @@ static int luaB_newproxy (lua_State *L) {
 static const luaL_Reg base_funcs[] = {
   {"assert", luaB_assert},
   {"collectgarbage", luaB_collectgarbage},
-  {"dofile", luaB_dofile},
+  // {"dofile", luaB_dofile},
   {"error", luaB_error},
   {"gcinfo", luaB_gcinfo},
   {"getfenv", luaB_getfenv},
   {"getmetatable", luaB_getmetatable},
-  {"loadfile", luaB_loadfile},
+  // {"loadfile", luaB_loadfile},
   {"load", luaB_load},
   {"loadstring", luaB_loadstring},
   {"next", luaB_next},

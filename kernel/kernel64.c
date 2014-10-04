@@ -218,6 +218,10 @@ int realmain()
   void **endp = endptr;
   int i=0;
 
+  //dump((void *)0x200, 0x9*16); 
+  setirq(0x21, keyboard_intr);
+  // setirq(0x28, timer_intr);
+
   clrscr();
   init_printf(0,xputc);
   printf("\nHello, total len: %d\n", (char *)endptr - (char *)main);
@@ -232,6 +236,15 @@ int realmain()
   lua_pushstring(L, "e1234");
   lua_pushstring(L, "f1234");
   lua_pushstring(L, "g1234");
+  printf("Press ESC to continue...");
+  while(1) {
+    int c = getc();
+    if(c == 1) {
+      printf("ESC pressed, continuing\n");
+      break;
+    }
+  }
+  printf("Loading Lua bootstrap...\n");
 
   if(luacode_lua[luacode_lua_len-1] != 0xa) {
     printf("luacode.lua should end with an empty line\n");
@@ -265,9 +278,6 @@ int realmain()
   }
 #endif
 
-  //dump((void *)0x200, 0x9*16); 
-  setirq(0x21, keyboard_intr);
-  // setirq(0x28, timer_intr);
   
   while(1) {
     int c = getc();
@@ -305,10 +315,12 @@ int realmain()
 void clrscr(void) {
   char *vidmem = (char *) 0xb8000;
   int i;
+  asm("cli");
   for(i=0;i<80*22; i++) {
     vidmem[2*i] = 0;
     vidmem[1+ (2*i)] = ca; // (i / 80) * 16;
   }
+  asm("sti");
 }
 
 void scrollup() {

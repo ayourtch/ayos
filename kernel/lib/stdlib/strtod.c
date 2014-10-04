@@ -6,6 +6,9 @@
 #include "libc.h"
 */
 
+long double __floatscan(FILE *f, int prec, int pok);
+
+
 static long double strtox(const char *s, char **p, int prec)
 {
 	FILE f = {

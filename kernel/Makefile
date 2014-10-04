@@ -99,6 +99,7 @@ kernel64.sys: kernel64.o printf.o luacode.o kernel64.ld $(LUAOBJS) $(LIBS)
 	objcopy -O binary kernel64.sys.debug kernel64.sys
 
 clean:
+	(cd lua-5.1.4; make clean)
 	rm -f *.o luacode.c
 	rm -f $(LIBS)
 	rm -f kernel64.sys
