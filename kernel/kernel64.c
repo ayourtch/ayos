@@ -117,6 +117,8 @@ void keyboard_intr(void) {
   // Never reached
 }
 
+uint64_t timer_tick = 0;
+
 void timer_intr(void) __attribute__((aligned(16)));
 void timer_intr(void) {
   uint32_t c;
@@ -135,6 +137,7 @@ void timer_intr(void) {
   asm("mov %%eax, %0\n" : "=m"(c));
   // put it into screen memory for debugging
   asm("mov %al, 0x000B8090");
+  timer_tick++;
 
   // inform the APIC
   asm("mov 0x5060, %rdi"); // [os_LocalAPICAddress]
@@ -220,7 +223,7 @@ int realmain()
 
   //dump((void *)0x200, 0x9*16); 
   setirq(0x21, keyboard_intr);
-  // setirq(0x28, timer_intr);
+  setirq(0x28, timer_intr);
 
   clrscr();
   init_printf(0,xputc);
@@ -280,12 +283,23 @@ int realmain()
 
   
   while(1) {
-    int c = getc();
-    lua_getglobal(L, "keypress");
-    lua_pushinteger(L, (uint8_t)c);
-    int err = lua_pcall(L, 1, 0, 0);
-    if (err != 0) {
-      printf("keypress LUA error %s\n", lua_tostring(L,-1));
+    int c = -1;
+    uint64_t tick = timer_tick;
+    while(!kbd_ready() && (tick == timer_tick) ) { asm("hlt"); }
+    if (tick != timer_tick) {
+      lua_getglobal(L, "tick");
+      lua_pushinteger(L, timer_tick);
+      int err = lua_pcall(L, 1, 0, 0);
+    }
+    if (kbd_ready()) {
+      c = kbd_buf[kbd_tail++];
+      kbd_tail = kbd_tail % KBD_QUEUE_SIZE;
+      lua_getglobal(L, "keypress");
+      lua_pushinteger(L, (uint8_t)c);
+      int err = lua_pcall(L, 1, 0, 0);
+      if (err != 0) {
+	printf("keypress LUA error %s\n", lua_tostring(L,-1));
+      }
     }
   }
   while(1) {
