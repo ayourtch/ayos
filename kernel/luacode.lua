@@ -45,19 +45,22 @@ local key2upperchar = { KB_MINUS = "_", KB_EQUAL = "+",
                         KB_COMMA = "<", KB_DOT = ">", KB_SLASH = "?"
                       }
 
-function key2char(key, shiftstate) 
+function key2char(key, shiftstate, ctrlstate) 
   local char = nil
-  if(#key == 1) then
-    if shiftstate then
-      char = string.upper(key)
-    else
-      char = key
-    end
+  if ctrlstate then
   else
-    if shiftstate then
-      char = key2upperchar[key]
+    if(#key == 1) then
+      if shiftstate then
+	char = string.upper(key)
+      else
+	char = key
+      end
     else
-      char = key2lowerchar[key]
+      if shiftstate then
+	char = key2upperchar[key]
+      else
+	char = key2lowerchar[key]
+      end
     end
   end
   return char
@@ -83,12 +86,25 @@ function clrscr()
   end
 end 
 
+function setvideoreg(idx, val)
+  outw(0x3d4, idx)
+  outw(0x3d5, val)
+end
+
+function hwcursor(cx, cy)
+  local offs = cx + 80*cy
+  setvideoreg(0xe, rshift(offs, 8)) -- loc hi
+  setvideoreg(0xf, band(0xff, offs)) -- loc lo
+end
+
+
 function showcursor()
-  write_bg(lcx, lcy, cursor_x)
+  -- write_bg(lcx, lcy, cursor_x)
+  hwcursor(lcx, lcy)
 end
 
 function hidecursor()
-  write_bg(lcx, lcy, bg_color)
+  -- write_bg(lcx, lcy, bg_color)
 end
 
 function write_b(b)
@@ -114,6 +130,15 @@ function write(s)
 end
 
 
+function writeat(cx, cy, s)
+  local scx, scy = lcx, lcy
+  lcx, lcy = cx, cy
+  for i=1,#s do
+    write_b(string.byte(s, i))
+  end
+  lcx, lcy = scx, scy
+  hwcursor(lcx, lcy)
+end
 
 
 local timer_tick = 0
@@ -123,27 +148,19 @@ function tick(t)
   if(0 == timer_tick % 100) then
     if cursor_x == cursor_a then
       cursor_x = cursor_b
-      showcursor()
+      -- showcursor()
     else
       cursor_x = cursor_a
-      showcursor()
+      -- showcursor()
     end
   end
   -- say(tostring(t))
-end
-
-function setvideoreg(idx, val)
-  outw(0x3d4, idx)
-  outw(0x3d5, val)
 end
 
 function movecursor(dx, dy)
   hidecursor()
   lcx = lcx + dx
   lcy = lcy + dy
-  local offs = lcx + 80*lcy
-  setvideoreg(0xe, rshift(offs, 8)) -- loc hi
-  setvideoreg(0xf, band(0xff, offs)) -- loc lo
   showcursor()
 end
 
@@ -151,8 +168,10 @@ function keypress(code)
  if code < 128 then
    if code < #scancodes then
      local key = scancodes[code+1]
+     local shiftstate = keypressed["KB_LSHIFT"]
+     local ctrlstate = keypressed["KB_LCNTRL"]
      keypressed[key] = true
-     local char = key2char(key, keypressed["KB_LSHIFT"])
+     local char = key2char(key, shiftstate, ctrlstate)
      if (char) then 
        write(char)
      else
@@ -164,7 +183,10 @@ function keypress(code)
          movecursor(0, -1)
        elseif key == "KB_KP_DOWN" then
          movecursor(0, 1)
+       elseif key == "KB_ESC" then
+         clrscr()
        end
+       writeat(0, 24, tostring(key) .. "             ")
      end
      -- say(tostring(code) .. " : " .. tostring(scancodes[code+1]))
    end
