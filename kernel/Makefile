@@ -74,6 +74,7 @@ LIBS = \
 	lib/math/floor.o \
 	lib/errno/errno_location.o \
 	lib/malloc.o \
+	bit.o \
 	lib.o
 
 

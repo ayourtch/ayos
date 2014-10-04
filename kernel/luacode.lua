@@ -1,3 +1,7 @@
+local bnot = bit.bnot
+local band, bor, bxor = bit.band, bit.bor, bit.bxor
+local lshift, rshift, rol = bit.lshift, bit.rshift, bit.rol
+
 local lcx = 0
 local lcy = 0
 
@@ -125,10 +129,18 @@ function tick(t)
   -- say(tostring(t))
 end
 
+function setvideoreg(idx, val)
+  outw(0x3d4, idx)
+  outw(0x3d5, val)
+end
+
 function movecursor(dx, dy)
   hidecursor()
   lcx = lcx + dx
   lcy = lcy + dy
+  local offs = lcx + 80*lcy
+  setvideoreg(0xe, rshift(offs, 8)) -- loc hi
+  setvideoreg(0xf, band(0xff, offs)) -- loc lo
   showcursor()
 end
 
@@ -164,3 +176,5 @@ function keypress(code)
 end
 
 clrscr()
+setvideoreg(0xe, 0) -- loc hi
+setvideoreg(0xf, 0) -- loc lo
