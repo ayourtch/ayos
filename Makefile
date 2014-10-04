@@ -9,7 +9,8 @@ all:
 	sudo cp build/pure64.sys build/mnt/
 	sudo cp kernel/kernel64.sys build/mnt/
 	sudo umount build/mnt
-	kvm -monitor stdio -hda build/disk.img -gdb tcp::1234 -vnc [::]:1
+	sudo tunctl -u ${USER} -t ayos0
+	kvm -net tap,vlan=0,ifname=ayos0,script=/bin/true -net nic,vlan=0,macaddr=00:aa:bb:cc:dd:ee -monitor stdio -hda build/disk.img -gdb tcp::1234 -vnc [::]:1
 	# kvm -hda build/disk.img -vnc [::]:1
 clean:
 	(cd kernel; make clean)
