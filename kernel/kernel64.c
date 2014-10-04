@@ -201,6 +201,7 @@ static int lua_fn_peek(lua_State *L) {
 
 lua_State *L;
 void lua_init_state(lua_State *L) {
+  luaopen_base(L);
   lua_register(L, "say", lua_fn_say);
   lua_register(L, "cr", lua_fn_cr);
   lua_register(L, "poke", lua_fn_poke);
@@ -215,21 +216,15 @@ int realmain()
   e820_t *pe = (void *)0x4000;
   void *endptr = &_end;
   void **endp = endptr;
-  char *dyn = 0;
   int i=0;
 
   clrscr();
   init_printf(0,xputc);
   printf("\nHello, total len: %d\n", (char *)endptr - (char *)main);
   printf("Endptr: %x\n", *endp);
-  dyn = malloc(5000);
-  strcpy(dyn, "testing123");
-  printf("Dynamic: %x, '%s'\n", dyn, dyn);
-  free(dyn);
   L = lua_open();
   lua_init_state(L);
   // lua_pushinteger(L, 1234);
-/*
   lua_pushstring(L, "a1234");
   lua_pushstring(L, "b1234");
   lua_pushstring(L, "c1234");
@@ -237,13 +232,7 @@ int realmain()
   lua_pushstring(L, "e1234");
   lua_pushstring(L, "f1234");
   lua_pushstring(L, "g1234");
-  printf("0X\n");
-  printf("Lua test: %s\n", lua_tostring(L,-1));
-  // asm("movaps %xmm0, 0x538a8-0x80");
-  asm("movaps %xmm0, 0x9f890-0x80");
-  // asm("movaps %xmm0, 0x9f898-0x80");
-  printf("1X\n");
-*/
+
   if(luacode_lua[luacode_lua_len-1] != 0xa) {
     printf("luacode.lua should end with an empty line\n");
   } else {
@@ -278,7 +267,7 @@ int realmain()
 
   //dump((void *)0x200, 0x9*16); 
   setirq(0x21, keyboard_intr);
-  setirq(0x28, timer_intr);
+  // setirq(0x28, timer_intr);
   
   while(1) {
     int c = getc();

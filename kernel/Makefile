@@ -1,5 +1,5 @@
 .PHONY: all
-CFLAGS= -m64 -mstackrealign -nostdlib -nostartfiles -nodefaultlibs -Ilua-5.1.4/src/ -Ilib/stdlib -Ilib/math
+CFLAGS= -g -nostdlib -nostartfiles -nodefaultlibs -Ilua-5.1.4/src/ -Ilib/stdlib -Ilib/math
 XLUAOBJS= 
 LUAOBJS = \
 	lua-5.1.4/src/lapi.o \
@@ -95,7 +95,8 @@ luacode.c: luacode.lua
 	xxd -i luacode.lua >luacode.c
 
 kernel64.sys: kernel64.o printf.o luacode.o kernel64.ld $(LUAOBJS) $(LIBS)
-	ld -T kernel64.ld -o kernel64.sys --print-map kernel64.o printf.o luacode.o $(LUAOBJS) $(LIBS) >symbols.map
+	ld -T kernel64.ld -o kernel64.sys.debug --print-map kernel64.o printf.o luacode.o $(LUAOBJS) $(LIBS) >symbols.map
+	objcopy -O binary kernel64.sys.debug kernel64.sys
 
 clean:
 	rm -f *.o luacode.c

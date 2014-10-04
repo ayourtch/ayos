@@ -34,9 +34,3 @@ long double strtold(const char * s, char ** p)
 	return strtox(s, p, 2);
 }
 
-weak_alias(strtof, strtof_l);
-weak_alias(strtod, strtod_l);
-weak_alias(strtold, strtold_l);
-weak_alias(strtof, __strtof_l);
-weak_alias(strtod, __strtod_l);
-weak_alias(strtold, __strtold_l);
