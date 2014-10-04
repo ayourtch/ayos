@@ -9,7 +9,7 @@ all:
 	sudo cp build/pure64.sys build/mnt/
 	sudo cp kernel/kernel64.sys build/mnt/
 	sudo umount build/mnt
-	kvm -hda build/disk.img -gdb tcp::1234 -vnc [::]:1
+	kvm -monitor stdio -hda build/disk.img -gdb tcp::1234 -vnc [::]:1
 	# kvm -hda build/disk.img -vnc [::]:1
 clean:
 	(cd kernel; make clean)
