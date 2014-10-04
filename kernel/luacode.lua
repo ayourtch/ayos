@@ -2,6 +2,9 @@ local bnot = bit.bnot
 local band, bor, bxor = bit.band, bit.bor, bit.bxor
 local lshift, rshift, rol = bit.lshift, bit.rshift, bit.rol
 
+local outw = hw.outw
+local poke = hw.poke
+
 local lcx = 0
 local lcy = 0
 

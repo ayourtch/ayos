@@ -182,107 +182,8 @@ static int lua_fn_say(lua_State *L) {
   return 0;
 }
 
-static int lua_fn_poke(lua_State *L) {
-  int n = lua_gettop(L);
-  int iaddr = lua_tointeger(L, 1);
-  int ival = lua_tointeger(L, 2);
-  char *ptr = (char *)iaddr;
-  int ret = (uint8_t)*ptr;
-  *ptr = ival;
-  lua_pushinteger(L, ret);
-  return 1;
-}
-
-static int lua_fn_peek(lua_State *L) {
-  int iaddr = lua_tointeger(L, 1);
-  char *ptr = (char *)iaddr;
-  int ret = (uint8_t)*ptr;
-  lua_pushinteger(L, ret);
-  return 1;
-}
-
-static inline void outb(uint16_t port, uint8_t val)
-{
-    asm volatile ( "outb %0, %1" : : "a"(val), "Nd"(port) );
-}
-
-static inline uint8_t inb(uint16_t port)
-{
-    uint8_t ret;
-    asm volatile ( "inb %1, %0" : "=a"(ret) : "Nd"(port) );
-    return ret;
-}
-
-static inline void outw(uint16_t port, uint16_t val)
-{
-    asm volatile ( "outw %0, %1" : : "a"(val), "Nd"(port) );
-}
-
-static inline uint16_t inw(uint16_t port)
-{
-    uint16_t ret;
-    asm volatile ( "inw %1, %0" : "=a"(ret) : "Nd"(port) );
-    return ret;
-}
-
-static inline void outl(uint16_t port, uint32_t val)
-{
-    asm volatile ( "outl %0, %1" : : "a"(val), "Nd"(port) );
-}
-
-static inline uint32_t inl(uint16_t port)
-{
-    uint32_t ret;
-    asm volatile ( "inl %1, %0" : "=a"(ret) : "Nd"(port) );
-    return ret;
-}
-
-static int lua_fn_outb(lua_State *L) {
-  int n = lua_gettop(L);
-  int iaddr = lua_tointeger(L, 1);
-  int ival = lua_tointeger(L, 2);
-  outb(iaddr, ival);
-  return 0;
-}
-
-static int lua_fn_inb(lua_State *L) {
-  int iaddr = lua_tointeger(L, 1);
-  int ret = inb(iaddr);
-  lua_pushinteger(L, ret);
-  return 1;
-}
-
-static int lua_fn_outw(lua_State *L) {
-  int n = lua_gettop(L);
-  int iaddr = lua_tointeger(L, 1);
-  int ival = lua_tointeger(L, 2);
-  outw(iaddr, ival);
-  return 0;
-}
-
-static int lua_fn_inw(lua_State *L) {
-  int iaddr = lua_tointeger(L, 1);
-  int ret = inw(iaddr);
-  lua_pushinteger(L, ret);
-  return 1;
-}
-
-static int lua_fn_outl(lua_State *L) {
-  int n = lua_gettop(L);
-  int iaddr = lua_tointeger(L, 1);
-  int ival = lua_tointeger(L, 2);
-  outl(iaddr, ival);
-  return 0;
-}
-
-static int lua_fn_inl(lua_State *L) {
-  int iaddr = lua_tointeger(L, 1);
-  int ret = inl(iaddr);
-  lua_pushinteger(L, ret);
-  return 1;
-}
-
 int luaopen_bit(lua_State *L);
+int luaopen_hw(lua_State *L);
 
 lua_State *L;
 
@@ -290,6 +191,7 @@ void lua_init_state(lua_State *L) {
   luaopen_base(L);
   luaopen_string(L);
   luaopen_bit(L);
+  luaopen_hw(L);
  /* 
   lua_getglobal(L,"package");
   lua_getfield(L,-1,"preload");
@@ -299,14 +201,6 @@ void lua_init_state(lua_State *L) {
 
   lua_register(L, "say", lua_fn_say);
   lua_register(L, "cr", lua_fn_cr);
-  lua_register(L, "poke", lua_fn_poke);
-  lua_register(L, "peek", lua_fn_peek);
-  lua_register(L, "inb", lua_fn_inb);
-  lua_register(L, "outb", lua_fn_outb);
-  lua_register(L, "inw", lua_fn_inw);
-  lua_register(L, "outw", lua_fn_outw);
-  lua_register(L, "inl", lua_fn_inl);
-  lua_register(L, "outl", lua_fn_outl);
 }
 
 extern unsigned char luacode_lua[];

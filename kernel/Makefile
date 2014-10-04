@@ -75,6 +75,7 @@ LIBS = \
 	lib/errno/errno_location.o \
 	lib/malloc.o \
 	bit.o \
+	hw.o \
 	lib.o
 
 
