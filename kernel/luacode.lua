@@ -121,9 +121,14 @@ end
 
 
 function pciscan()
-  for bus=0,0 do
-    for dev=0,8 do
-      say(tohex(pciread(bus, dev, 0, 0)))
+  for bus=0,3 do
+    for dev=0,31 do
+      for func=0,7 do
+        local devid = tohex(pciread(bus, dev, func, 0))
+        if not (devid == 'ffffffff') then
+          say(tohex(bus) .. ":" .. tohex(dev) .. ":" .. tohex(func) .. " : " .. devid)
+        end
+      end
     end
   end
 end
