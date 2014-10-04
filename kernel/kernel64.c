@@ -224,7 +224,7 @@ int realmain()
 
   //dump((void *)0x200, 0x9*16); 
   setirq(0x21, keyboard_intr);
-  setirq(0x28, timer_intr);
+  // setirq(0x28, timer_intr);
 
   clrscr();
   init_printf(0,xputc);
