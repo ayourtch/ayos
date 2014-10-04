@@ -205,6 +205,7 @@ static int lua_fn_peek(lua_State *L) {
 lua_State *L;
 void lua_init_state(lua_State *L) {
   luaopen_base(L);
+  luaopen_string(L);
   lua_register(L, "say", lua_fn_say);
   lua_register(L, "cr", lua_fn_cr);
   lua_register(L, "poke", lua_fn_poke);
@@ -227,8 +228,8 @@ int realmain()
 
   clrscr();
   init_printf(0,xputc);
-  printf("\nHello, total len: %d\n", (char *)endptr - (char *)main);
-  printf("Endptr: %x\n", *endp);
+  printf("\nKernel size: %d\n", (char *)endptr - (char *)main);
+  // printf("Endptr: %x\n", *endp);
   L = lua_open();
   lua_init_state(L);
   // lua_pushinteger(L, 1234);
@@ -239,6 +240,7 @@ int realmain()
   lua_pushstring(L, "e1234");
   lua_pushstring(L, "f1234");
   lua_pushstring(L, "g1234");
+#ifdef PAUSE
   printf("Press ESC to continue...");
   while(1) {
     int c = getc();
@@ -247,7 +249,8 @@ int realmain()
       break;
     }
   }
-  printf("Loading Lua bootstrap...\n");
+#endif
+  printf("Loading Lua bootstrap...");
 
   if(luacode_lua[luacode_lua_len-1] != 0xa) {
     printf("luacode.lua should end with an empty line\n");
@@ -256,6 +259,7 @@ int realmain()
     if(luaL_loadstring(L, luacode_lua)) {
       printf("Lua load error: %s\n", lua_tostring(L,-1));
     } else {
+      printf("done!\n");
       int err = lua_pcall(L, 0, LUA_MULTRET, 0);
       if(err) {
         printf("Lua run error: %s\n", lua_tostring(L,-1));

@@ -24,6 +24,7 @@ LUAOBJS = \
 	lua-5.1.4/src/ldebug.o \
 	lua-5.1.4/src/lauxlib.o \
 	lua-5.1.4/src/lbaselib.o \
+	lua-5.1.4/src/lstrlib.o \
 
 LIBS = \
 	lib/setjmp/setjmp.o \
@@ -43,6 +44,9 @@ LIBS = \
 	lib/string/strncpy.o \
 	lib/string/stpncpy.o \
 	lib/string/memset.o \
+	lib/string/strpbrk.o \
+	lib/string/tolower.o \
+	lib/string/toupper.o \
 	lib/ctype/isalnum.o \
 	lib/ctype/isspace.o \
 	lib/ctype/isalpha.o \
@@ -77,7 +81,6 @@ LIBS = \
 XXX= \
 	lua-5.1.4/src/luac.o \
 	lua-5.1.4/src/loadlib.o \
-	lua-5.1.4/src/lstrlib.o \
 	lua-5.1.4/src/loslib.o \
 	lua-5.1.4/src/liolib.o \
 	lua-5.1.4/src/linit.o \
